@@ -1,0 +1,76 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# Editors/IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-* 
+
+# Build artifacts
+build/
+*.o
+*.obj
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+*.lib
+*.out
+*.bin
+*.log
+*.tmp
+*.lock
+
+# Project-specific binaries
+maschine_driver
+maschine_driver_alt
+maschine_native_driver
+maschine-driver
+maschine-monitor
+pad_monitor
+list_midi_devices
+debug_midi_devices
+rebellion-maschine-driver
+maschine-native
+
+# Test binaries
+/test_*
+*test*
+
+# Archives and installers
+*.zip
+*.tar
+*.gz
+*.bz2
+*.xz
+*.7z
+*.rar
+*.dmg
+*.pkg
+*.iso
+*.msi
+*.torrent
+
+# User/system data not for source control
+Program Files/
+ProgramData/
+windows/
+users/
+
+# Node/NPM
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+
+# Others
+.env
+*.plist

@@ -1,0 +1,26 @@
+CXX = clang++
+CXXFLAGS = -std=c++11 -Wall -Wextra -O2
+LDFLAGS = -framework CoreMIDI -framework CoreFoundation
+
+TARGET = rebellion-maschine-driver
+SOURCE = rebellion_maschine_driver.cpp
+
+all: $(TARGET)
+
+$(TARGET): $(SOURCE)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SOURCE) $(LDFLAGS)
+
+clean:
+	rm -f $(TARGET)
+
+install: $(TARGET)
+	sudo cp $(TARGET) /usr/local/bin/
+	sudo chmod +x /usr/local/bin/$(TARGET)
+
+uninstall:
+	sudo rm -f /usr/local/bin/$(TARGET)
+
+test: $(TARGET)
+	./$(TARGET)
+
+.PHONY: all clean install uninstall test 

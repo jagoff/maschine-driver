@@ -1,0 +1,55 @@
+# Makefile para Maschine Mikro Driver - Modo Nativo
+CXX = c++
+CXXFLAGS = -std=c++17 -Wall -Wextra -O2
+LDFLAGS = -framework CoreMIDI -framework CoreFoundation
+
+# Archivos fuente
+MASCHINE_SOURCES = MaschineMikroDriver_User.cpp maschine_native_driver.cpp
+MASCHINE_OBJECTS = $(MASCHINE_SOURCES:.cpp=.o)
+MASCHINE_TARGET = maschine_native_driver
+
+# Objetivos
+all: $(MASCHINE_TARGET)
+
+$(MASCHINE_TARGET): $(MASCHINE_OBJECTS)
+	$(CXX) $(MASCHINE_OBJECTS) -o $(MASCHINE_TARGET) $(LDFLAGS)
+	@echo "✅ Driver Maschine nativo compilado: $(MASCHINE_TARGET)"
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Instalación
+install: $(MASCHINE_TARGET)
+	@echo "📦 Instalando driver Maschine nativo..."
+	sudo cp $(MASCHINE_TARGET) /usr/local/bin/
+	sudo chmod +x /usr/local/bin/$(MASCHINE_TARGET)
+	@echo "✅ Driver instalado en /usr/local/bin/$(MASCHINE_TARGET)"
+
+# Limpieza
+clean:
+	rm -f $(MASCHINE_OBJECTS) $(MASCHINE_TARGET)
+	@echo "🧹 Archivos de compilación eliminados"
+
+# Ejecutar
+run: $(MASCHINE_TARGET)
+	./$(MASCHINE_TARGET)
+
+# Desinstalar
+uninstall:
+	@echo "🗑️ Desinstalando driver Maschine nativo..."
+	sudo rm -f /usr/local/bin/$(MASCHINE_TARGET)
+	@echo "✅ Driver desinstalado"
+
+# Ayuda
+help:
+	@echo "🎹 Maschine Mikro Driver - Modo Nativo"
+	@echo "======================================"
+	@echo "Comandos disponibles:"
+	@echo "  make          - Compilar el driver"
+	@echo "  make install  - Instalar el driver"
+	@echo "  make run      - Ejecutar el driver"
+	@echo "  make clean    - Limpiar archivos de compilación"
+	@echo "  make uninstall- Desinstalar el driver"
+	@echo "  make help     - Mostrar esta ayuda"
+
+.PHONY: all install clean run uninstall help 
