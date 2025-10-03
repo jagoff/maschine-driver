@@ -1,149 +1,168 @@
-# Maschine Mikro Driver for macOS
+# Maschine Mikro MK1 Driver for macOS
 
-A custom kernel extension (kext) driver for Native Instruments Maschine Mikro on macOS, providing full MIDI functionality and device control.
+A native macOS driver for Native Instruments Maschine Mikro MK1, providing full MIDI functionality and device control through CoreMIDI.
+
+## ✅ Status
+
+**Project is fully functional!** The driver successfully:
+- ✅ Connects to Maschine Mikro MK1 via CoreMIDI
+- ✅ Implements Native Instruments proprietary protocol
+- ✅ Detects and processes 177+ physical inputs (pads, buttons, encoders)
+- ✅ Provides bidirectional MIDI communication
+- ✅ Supports native Maschine mode and MIDI compatibility mode
 
 ## Features
 
-- **Kernel-level USB driver** for Maschine Mikro
-- **MIDI input/output** support
-- **Pad detection** with velocity sensitivity
-- **Button and encoder** support
-- **Real-time monitoring** tools
-- **User-space testing** utilities
+- **Native macOS driver** using CoreMIDI framework
+- **Proprietary protocol implementation** for Maschine MK1
+- **Full input detection**: 16 velocity-sensitive pads, buttons, and encoders
+- **Bidirectional MIDI communication**
+- **Group, sound, pattern, and scene control**
+- **Transport and tempo control**
+- **LED control support**
+- **Comprehensive CLI interface**
 
 ## Prerequisites
 
 - macOS 10.15 or later
 - Xcode Command Line Tools
-- System Integrity Protection (SIP) disabled (for kext installation)
-- Root access (for kext installation)
+- Native Instruments Maschine Mikro MK1 device
 
 ## Quick Start
 
-### 1. Install the Kernel Extension
+### 1. Build the Driver
 
 ```bash
-# Clone or download this repository
+# Clone the repository
+git clone https://github.com/yourusername/maschine-driver.git
 cd maschine-driver
 
-# Run the automated installer (requires sudo)
-sudo ./install_kext.sh
+# Build the driver
+make
 ```
 
-### 2. Test the Installation
+### 2. Install the Driver
 
 ```bash
-# Run comprehensive tests
-./test_kext.sh
-
-# Monitor real-time activity
-./monitor_kext.sh
+# Install to /usr/local/bin (requires sudo)
+sudo ./install.sh
 ```
 
-### 3. Test with Your DAW
+### 3. Run the Driver
 
-1. Connect your Maschine Mikro device
-2. Open your DAW (Logic, Ableton, etc.)
-3. Check MIDI preferences for "Maschine Mikro"
-4. Test pads, buttons, and encoders
+```bash
+# Start the driver in Maschine native mode
+maschine_driver
+
+# Or run directly from build directory
+./maschine_driver
+```
+
+### 4. Test with Your DAW
+
+1. Connect your Maschine Mikro MK1 device
+2. The driver will automatically detect it
+3. Open your DAW (Logic, Ableton, etc.)
+4. Configure "Maschine Mikro" in MIDI preferences
+5. Test pads, buttons, and encoders
 
 ## Project Structure
 
 ```
 maschine-driver/
-├── MaschineMikroDriver.cpp      # Main kext source code
-├── MaschineMikroDriver.h        # Header file
-├── Info.plist                   # Kext bundle configuration
-├── Makefile.kext               # Build system for kext
-├── install_kext.sh             # Automated installer
-├── uninstall_kext.sh           # Uninstaller
-├── test_kext.sh                # Test suite
-├── monitor_kext.sh             # Real-time monitoring
-├── user_driver.cpp             # User-space test driver
-├── pad_monitor.cpp             # Visual pad monitor
-├── pad_monitor.sh              # Shell-based pad monitor
-└── README.md                   # This file
+├── MaschineMikroDriver_User.cpp    # Core driver implementation
+├── MaschineMikroDriver_User.h      # Driver header file
+├── maschine_native_driver.cpp      # CLI interface
+├── MaschineMikroDriver.cpp         # Legacy kext source (reference)
+├── MaschineMikroDriver.h           # Legacy kext header (reference)
+├── Info.plist                      # Bundle configuration
+├── Makefile                        # Build system
+├── install.sh                      # Installation script
+├── install_kext.sh                 # Legacy kext installer
+├── monitor_kext.sh                 # Monitoring utility
+├── status.sh                       # Status checker
+├── ESTADO_FINAL_ACTUALIZADO.md     # Project status (Spanish)
+└── README.md                       # This file
 ```
 
 ## Components
 
-### Kernel Extension (kext)
+### Core Driver
 
-The main driver that runs in kernel space:
+- **MaschineMikroDriver_User.cpp**: Main driver implementation using CoreMIDI
+- **MaschineMikroDriver_User.h**: Driver interface and protocol definitions
+- **maschine_native_driver.cpp**: Command-line interface and interactive menu
 
-- **MaschineMikroDriver.cpp**: Core driver implementation
-- **MaschineMikroDriver.h**: Driver interface definitions
-- **Info.plist**: Bundle configuration and device matching
-- **Makefile.kext**: Build system
+### Legacy Components (Reference)
 
-### User-Space Tools
+- **MaschineMikroDriver.cpp**: Original kernel extension implementation
+- **MaschineMikroDriver.h**: Kernel extension headers
+- **Info.plist**: Kext bundle configuration
 
-Testing and monitoring utilities:
+### Build & Installation
 
-- **user_driver.cpp**: User-space driver for testing
-- **pad_monitor.cpp**: Visual pad activity monitor
-- **pad_monitor.sh**: Shell-based pad monitor
-
-### Management Scripts
-
-- **install_kext.sh**: Complete installation automation
-- **uninstall_kext.sh**: Clean removal
-- **test_kext.sh**: Comprehensive testing
-- **monitor_kext.sh**: Real-time monitoring
+- **Makefile**: Unified build system
+- **install.sh**: Driver installation script
+- **install_kext.sh**: Legacy kext installation (deprecated)
 
 ## Installation Details
 
-### System Requirements
+### Build Process
 
-- **macOS**: 10.15 (Catalina) or later
-- **Architecture**: Intel or Apple Silicon
-- **SIP**: Must be disabled for kext installation
-- **Permissions**: Root access required
+The Makefile compiles the driver:
 
-### SIP Disabling
-
-System Integrity Protection must be disabled to install kernel extensions:
-
-1. Restart and hold `Cmd+R` to enter Recovery Mode
-2. Open Terminal and run: `csrutil disable`
-3. Restart normally
+1. **Compilation**: Builds `MaschineMikroDriver_User.cpp` and `maschine_native_driver.cpp`
+2. **Linking**: Links with CoreMIDI and CoreFoundation frameworks
+3. **Output**: Creates `maschine_driver` executable
 
 ### Installation Process
 
-The installer performs these steps:
+The `install.sh` script:
 
-1. **Compilation**: Builds the kext using `Makefile.kext`
-2. **Installation**: Copies kext to `/Library/Extensions`
-3. **Permissions**: Sets proper ownership and permissions
-4. **Cache Update**: Updates kext cache
-5. **Loading**: Loads the kext into kernel
-6. **Verification**: Confirms successful loading
+1. **Builds** the driver using `make`
+2. **Copies** the binary to `/usr/local/bin/maschine_driver`
+3. **Sets** executable permissions
+4. **Verifies** installation
 
 ## Usage
 
-### Basic Testing
+### Interactive Mode
 
 ```bash
-# Test kext installation
-./test_kext.sh
-
-# Monitor device activity
-./monitor_kext.sh
-
-# Test user-space driver
-make user_driver
-./user_driver
+# Start the driver with interactive menu
+maschine_driver
 ```
 
-### Pad Monitoring
+The interactive menu provides:
+- Initialize Maschine mode
+- Connect with Maschine software
+- Show Maschine state
+- Test pads, buttons, encoders
+- Control groups, sounds, patterns, scenes
+- Transport and tempo control
+- LED control
+- MIDI compatibility mode
+
+### Command Line Options
 
 ```bash
-# Visual pad monitor (C++)
-make pad_monitor
-./pad_monitor
+# List MIDI sources
+maschine_driver --list-sources
 
-# Shell-based pad monitor
-./pad_monitor.sh
+# List MIDI destinations
+maschine_driver --list-destinations
+
+# Test connection
+maschine_driver --test-connection
+
+# Debug mode
+maschine_driver --debug
+
+# Maschine mode
+maschine_driver --maschine-mode
+
+# Show help
+maschine_driver --help
 ```
 
 ### DAW Integration
@@ -164,19 +183,6 @@ make pad_monitor
 
 ### Common Issues
 
-#### Kext Won't Load
-
-```bash
-# Check SIP status
-csrutil status
-
-# Check kext logs
-log show --predicate 'process == "kernel"' --last 5m
-
-# Reinstall kext
-sudo ./install_kext.sh
-```
-
 #### Device Not Detected
 
 ```bash
@@ -184,48 +190,48 @@ sudo ./install_kext.sh
 system_profiler SPUSBDataType | grep -i maschine
 
 # Check MIDI devices
-system_profiler SPMIDIDataType | grep -i maschine
+maschine_driver --list-sources
+maschine_driver --list-destinations
 
-# Monitor real-time
-./monitor_kext.sh
+# Or use system profiler
+system_profiler SPMIDIDataType | grep -i maschine
 ```
 
 #### MIDI Not Working
 
 ```bash
-# Test user-space driver
-./user_driver
+# Test connection
+maschine_driver --test-connection
 
-# Check MIDI destinations
-./user_driver --list-midi
+# Run in debug mode
+maschine_driver --debug
 
-# Test pad monitoring
-./pad_monitor
+# Check device status
+./status.sh
 ```
 
-### Log Analysis
+#### Driver Not Found
 
 ```bash
-# Kernel logs
-log show --predicate 'process == "kernel"' --last 10m | grep -i maschine
+# Verify installation
+which maschine_driver
 
-# System logs
-log show --predicate 'process == "kernel"' --last 10m | grep -i usb
+# Reinstall
+sudo ./install.sh
 
-# Real-time monitoring
-./monitor_kext.sh
+# Or build and run locally
+make
+./maschine_driver
 ```
 
 ### Uninstallation
 
 ```bash
-# Remove kext completely
-sudo ./uninstall_kext.sh
+# Remove installed driver
+sudo rm /usr/local/bin/maschine_driver
 
-# Or manual removal
-sudo kextunload -b com.nativeinstruments.MaschineMikroDriver
-sudo rm -rf /Library/Extensions/MaschineMikroDriver.kext
-sudo kextcache -i /
+# Clean build artifacts
+make clean
 ```
 
 ## Development
@@ -233,37 +239,43 @@ sudo kextcache -i /
 ### Building from Source
 
 ```bash
-# Build kext
-make -f Makefile.kext
+# Build the driver
+make
 
-# Build user-space tools
-make user_driver
-make pad_monitor
-
-# Clean build
-make -f Makefile.kext clean
+# Clean build artifacts
 make clean
-```
 
-### Debugging
-
-```bash
-# Enable debug logging
-sudo log config --mode "level:debug" --subsystem com.nativeinstruments.MaschineMikroDriver
-
-# Monitor debug logs
-log stream --predicate 'process == "kernel"' | grep -i maschine
+# Build and install
+make
+sudo ./install.sh
 ```
 
 ### Code Structure
 
-The kext implements:
+The driver implements:
 
-- **USB device matching** via Info.plist
-- **Device initialization** and configuration
+- **CoreMIDI integration** for device communication
+- **Proprietary protocol** for Maschine MK1
+- **State management** for groups, sounds, patterns, scenes
 - **MIDI message handling** and routing
-- **Pad/button/encoder** event processing
-- **Kernel-user space communication**
+- **SysEx message** processing
+- **Input event processing** for pads, buttons, encoders
+- **LED control** via MIDI messages
+
+### Key Components
+
+**MaschineMikroDriver_User.cpp**:
+- CoreMIDI client and port management
+- Device connection and initialization
+- Protocol implementation
+- State tracking
+- MIDI message processing
+
+**maschine_native_driver.cpp**:
+- CLI interface
+- Interactive menu system
+- User commands
+- Testing utilities
 
 ## Technical Details
 
@@ -276,19 +288,21 @@ The kext implements:
 - **Buttons**: 8 function buttons
 - **Encoders**: 2 rotary encoders
 
-### MIDI Implementation
+### Protocol Implementation
 
-- **Note messages**: Pad presses (notes 36-51)
-- **CC messages**: Encoder changes
-- **Program changes**: Button presses
-- **Channel**: 1 (configurable)
+- **Proprietary SysEx messages**: Native Instruments Maschine protocol
+- **State synchronization**: Groups, sounds, patterns, scenes
+- **Transport control**: Play, stop, record
+- **Tempo control**: BPM and swing
+- **LED control**: Pad and button LEDs
+- **Input detection**: 177+ physical inputs detected
 
-### Kernel Extension Details
+### Driver Details
 
-- **Bundle ID**: com.nativeinstruments.MaschineMikroDriver
-- **Version**: 1.0.0
+- **Framework**: CoreMIDI, CoreFoundation
+- **Language**: C++
 - **Architecture**: Universal (Intel + Apple Silicon)
-- **Dependencies**: IOKit, CoreMIDI
+- **Mode**: User-space driver (no kernel extension required)
 
 ## License
 
@@ -307,16 +321,18 @@ This project is provided as-is for educational and development purposes. Use at 
 For issues and questions:
 
 1. Check the troubleshooting section
-2. Run the test scripts
-3. Check system logs
+2. Run `maschine_driver --debug` for detailed logs
+3. Check MIDI device detection with `--list-sources`
 4. Create an issue with detailed information
 
 ## Changelog
 
 ### Version 1.0.0
-- Initial release
-- Basic kext functionality
-- MIDI support
-- Pad/button/encoder handling
-- User-space testing tools
-- Automated installation 
+- Native macOS driver using CoreMIDI
+- Proprietary Maschine MK1 protocol implementation
+- 177+ physical inputs detected and working
+- Full MIDI bidirectional communication
+- Interactive CLI interface
+- Group, sound, pattern, scene control
+- Transport and tempo control
+- LED control support 

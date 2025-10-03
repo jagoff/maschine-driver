@@ -73,4 +73,6 @@ __pycache__/
 
 # Others
 .env
-*.plist
+
+# Keep Info.plist (needed for project)
+!Info.plist
